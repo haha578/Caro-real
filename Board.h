@@ -1,5 +1,5 @@
 #pragma once   // Tránh việc file .h bị include nhiều lần
-
+#include "SaveLoad.h"
 //HẰNG SỐ//
 // Kích thước bàn cờ 12x12, vị trí bắt đầu vẽ bàn cờ
 #define BOARD_SIZE 12
@@ -14,7 +14,8 @@ extern _POINT _A[BOARD_SIZE][BOARD_SIZE];
 extern bool _TURN;
 extern int _COMMAND;
 extern int _X, _Y;
-
+extern int moveCount;
+extern Move moves[BOARD_SIZE * BOARD_SIZE];
 
 //KHAI BÁO HÀM//
 // Console
@@ -35,6 +36,11 @@ int ProcessFinish(int pWhoWin);   // Thông báo thắng/thua/hòa
 int AskContinue();                // Hỏi có chơi tiếp không
 int TestBoard();                  // Kiểm tra thắng/thua/hòa
 int CheckBoard(int pX, int pY);   // Đánh dấu 1 ô
+
+// Lưu ván đấu
+void recordMove(int c);           // Ghi lại nước đi vừa đánh
+int  toRecordResult(int boardResult);  // Đổi kết quả TestBoard() sang GameResult
+void trySave(int result);         // Hỏi người chơi có muốn lưu không
 
 // Di chuyển con trỏ (WASD)
 void MoveRight();
