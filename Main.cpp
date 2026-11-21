@@ -44,6 +44,9 @@ void GameLoop() {
                             return;
                         }
                         else {
+                            g_openedIndex = -1;
+                            g_openedRecord = GameRecord();
+
                             StartGame();
                             moveCount = 0;
                         }
@@ -57,6 +60,9 @@ void GameLoop() {
 
 // Ván mới
 void PlayNewGame() {
+    g_openedIndex = -1;
+    g_openedRecord = GameRecord();
+
     StartGame();        // xóa màn hình, reset dữ liệu, vẽ bàn cờ
     moveCount = 0;
     GameLoop();
@@ -101,7 +107,7 @@ void RestoreGame(const GameRecord& r) {
 }
 
 // Chọn 1 ván trong danh sách để chơi tiếp
-void ContinueSavedGame() {
+void DelAndSave() {
     system("cls");
     GameRecord ds[100];
     int n = loadGameRecords(ds, 100);   // cùng thứ tự với showSavedGames()
@@ -113,23 +119,36 @@ void ContinueSavedGame() {
         return;
     }
 
-    printf("\nNhap STT van muon choi tiep (0 = quay lai): ");
+    printf("\nNhap STT van muon choi hoac xoa (0 = quay lai): ");
     std::string line;
     Readlines(stdin, line);
     int idx = atoi(line.c_str());       // đổi chuỗi sang số
-
     if (idx < 1 || idx > n) return;     // 0 hoặc nhập sai -> về menu
 
-    const GameRecord& r = ds[idx - 1];
-    if (r.result != UNFINISHED) {
-        printf("\nVan nay da ket thuc, khong the choi tiep.\n");
-        printf("Nhan phim bat ky de quay lai menu...");
-        _getch();
-        return;
-    }
+    printf_s("\n  1. Choi tiep\n  2. Xoa\n  0. Quay lai\nChon: ");
+    int ch = _getch();
 
-    RestoreGame(r);
-    GameLoop();
+    if (ch == '1') {
+        const GameRecord& r = ds[idx - 1];
+        if (r.result != UNFINISHED) {
+            printf("\nVan nay da ket thuc, khong the choi tiep.\n");
+            printf("Nhan phim bat ky de quay lai menu...");
+            _getch();
+            return;
+        }
+
+        g_openedIndex = idx - 1;
+        g_openedRecord = r;
+
+        RestoreGame(r);
+        GameLoop();
+    }
+    else if (ch == '2') {
+        printf("\n\n");
+        deleteSavedGame(idx);
+        printf("\nNhan phim bat ky de tiep tuc...");
+        _getch();
+    }
 }
 
 int ShowMenu() {
@@ -151,7 +170,7 @@ int main() {
             PlayNewGame();
         }
         else if (choice == '2') {
-            ContinueSavedGame();
+            DelAndSave();
         }
         else if (choice == '0') {
             return 0;

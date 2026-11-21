@@ -61,6 +61,7 @@ void StartGame() {
 	system("cls");
 	ResetData();
 	DrawBoard(BOARD_SIZE);
+	GotoXY(_X, _Y);
 }
 
 //Hàm dọn dẹp
@@ -214,8 +215,16 @@ int toRecordResult(int boardResult) {
 void trySave(int result) {
 	if (moveCount == 0) return;   // chưa đi nước nào thì khỏi lưu
 	GotoXY(0, _A[BOARD_SIZE - 1][BOARD_SIZE - 1].y + 4);
-	askSaveOnExit(PLAYER1_NAME, PLAYER2_NAME, result,
-		BOARD_SIZE, moves, moveCount);
+	askSaveOnExit(
+        PLAYER1_NAME,
+        PLAYER2_NAME,
+        result,
+        BOARD_SIZE,
+        moves,
+        moveCount,
+        g_openedIndex,
+        &g_openedRecord
+    );
 }
 
 
